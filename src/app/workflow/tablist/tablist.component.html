@@ -1,0 +1,136 @@
+<!-- Tabs Panel -->
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <button class="nav-link active fw-600 fs-20" id="schema-tab" data-bs-toggle="tab" data-bs-target="#schema"
+      type="button" role="tab" aria-controls="schema" aria-selected="true" i18n="@@Schema">Schema</button>
+    <button #workflowsTab class="nav-link fw-600 fs-20" id="rulesets-tab" data-bs-toggle="tab"
+      data-bs-target="#rulesets" type="button" role="tab" aria-controls="rulesets" aria-selected="true"
+      i18n="@@Workflows">Workflows</button>
+    <!-- Dynamic Tabs for rulesets detail -->
+    <ng-container *ngFor="let t of tabs">
+      <button #dynamicTab class="nav-link fw-600 fs-20" id="{{t.name}}-tab" data-bs-toggle="tab"
+        (click)="this.showSource = false" attr.data-bs-target="#{{t.name}}" type="button" role="tab"
+        attr.aria-controls="{{t.name}}" aria-selected="true">{{t.name}}<span class="btn-close ms-3"
+          (click)="close($event, t)"></span></button>
+    </ng-container>
+  </div>
+</nav>
+
+<!-- Tabs content -->
+<div class="tab-content mt-4 mb-5" id="nav-tabContent">
+  <!-- Schema Tab content -->
+  <div class="tab-pane fade show active" id="schema" role="tabpanel" aria-labelledby="schema-tab">
+    <ng-container *ngIf="schemaData">
+      <div class="container">
+        <!-- First Section: patternschema attributes -->
+        <div class="row">
+          <div class="col-12 mb-4" *ngFor="let patternschema of schemaData?.patternschema">
+            <div class="row align-item-center">
+              <div class="col-6 fs-30 mb-2 text-color">
+                <b>{{ patternschema?.attr }}</b>
+              </div>
+              <div class="col-6 fs-20 text-color">
+                <p>{{ patternschema.valtype }}</p>
+              </div>
+              <span style="margin-top: -10px;">
+                <small class="description">{{ patternschema.longdesc}}</small>
+              </span>
+              <div class="col-6 text-color">
+                <span class="badge bg-primary mx-2 fs-10" *ngFor="let vals of patternschema.vals">{{ vals }}</span>
+              </div>
+              <span *ngIf="patternschema.valtype != 'bool'">
+                <small class="constraint-value text-color">{{ getConstraints(patternschema) }}</small>
+              </span>
+            </div>
+          </div>
+        </div>
+        <hr class="text-color">
+        <!-- Second Section: Actionschema details -->
+        <div class="row">
+          <div class=" fs-20 mb-2 text-color">
+            <b>{{schemaData.actionschema.tasks.length > 1 ? 'NextSteps' : 'NextStep'}}:</b>
+            <span class="badge bg-primary mx-2 fs-10" *ngFor="let task of schemaData?.actionschema?.tasks">{{ task
+              }}</span>
+          </div>
+          <div class=" mt-2 fs-20 text-color">
+            <b>{{schemaData.actionschema.properties.length > 1 ? 'NextStep Tags' : 'NextStep Tag'}}:</b>
+            <span class="badge bg-success mx-2 fs-10" *ngFor="let property of schemaData?.actionschema?.properties">{{
+              property }}</span>
+          </div>
+        </div>
+        <hr class="text-color">
+        <!--MetaData fields-->
+        <div class="row">
+          <div class="col"></div>
+          <div class="col-auto">
+            <div class="d-flex align-items-center">
+              <p class="me-2"><span class="meta-data" i18n="@@Createdby">Created by</span><span class="text-color"> {{
+                  schemaData.createdby }} </span><span class="meta-data" i18n="@@at">at</span><span class="text-color">
+                  {{
+                  schemaData.createdat | date }} </span></p>
+            </div>
+            <div class="d-flex align-items-center">
+              <p class="me-2"><span class="meta-data" i18n="@@Editedby">Edited by</span><span class="text-color"> {{
+                  schemaData.editedby
+                  }} </span><span class="meta-data" i18n="@@at">at</span><span class="text-color"> {{
+                  schemaData.editedat | date }}
+                </span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="!schemaData">
+      <div class="container d-flex justify-content-center">
+        <h3 class="text-color">{{constants.SCHEMA_DETAILS_DATA_NOT_FOUND}}</h3>
+      </div>
+    </ng-container>
+  </div>
+  <!-- Rulesets Tab content -->
+  <div class="tab-pane fade show" id="rulesets" role="tabpanel" aria-labelledby="rulesets-tab">
+    <ng-container *ngIf="WorksFlows && WorksFlows.length > 0">
+      <div class="container">
+        <div class="note d-flex justify-content-end align-items-center">
+          <a class="click m-1 p-1 pointer" (click)="openWorkFlowModal()" style="float: right;">Add workflow</a>
+        </div>
+        <div class="note d-flex justify-content-end align-items-center">
+          <div class="inactive-color"></div> &nbsp;<span class="not-active">Inactive</span>
+          &nbsp;&nbsp;<div class="active-color"></div>&nbsp;<span class="active">Active</span>
+        </div>
+        <div *ngFor="let workflow of WorksFlows, index as i">
+          <app-workflow-list id="{{i}}" [workflow]="workflow"
+            (openDetail)="openRuledetailTabAndMakeAPIcall($event)"></app-workflow-list>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="!WorksFlows || WorksFlows.length == 0">
+      <div class="container d-flex justify-content-center">
+        <h3 class="text-color">{{constants.WORKFLOW_LIST_DATA_NOT_FOUND}}</h3>
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- Dynamic tab contents -->
+  <ng-container *ngFor="let t of tabs,let tabIndex = index">
+    <div class="tab-pane fade show" id="{{t.name}}" role="tabpanel" aria-labelledby="rulesets-tab">
+      <div class="row">
+        <div class="col-12" style="position: sticky;top: 0; z-index: 100;">
+          <a class="click m-1 p-1 pointer" (click)="openRuleModal(t.name,tabIndex)" style="float: right;">Add rule</a>
+          <a class="click m-1 p-1 pointer" (click)="this.showSource = !this.showSource;" style="float: right;">View
+            Source</a>
+        </div>
+        <div class="col-12">
+          <div *ngIf="!showSource">
+            <ng-container *ngFor="let Rule of t.RTree, let i = index">
+              <app-then-else-call [Rule]="Rule" [index]="i" [rulesets]="FinalRulesetsList" [schemaData]="schemaData"
+                  [WorksFlows]="WorksFlows" (openDetail)="openNewTab($event)" (updateRule)="updateRtree($event,tabIndex,i)"></app-then-else-call>
+            </ng-container>
+          </div>
+          <div *ngIf="showSource">
+            <ngx-json-viewer [json]="t.RTree"></ngx-json-viewer>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

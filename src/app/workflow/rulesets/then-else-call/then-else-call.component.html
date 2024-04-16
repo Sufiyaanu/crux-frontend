@@ -1,0 +1,208 @@
+<!-- IF then and else both exists -->
+<ng-container *ngIf="Rule?.thenRuleset && Rule?.elseRuleset">
+    <div class="if-block" [ngClass]="parentHovered ? 'hovered' : ''" (mouseenter)="toggleParentHover(true)"
+        (mouseleave)="toggleParentHover(false)">
+        <div class="row mt-2">
+            <div class="col-4" (click)="openRuleModal()">
+                <div class="row">
+                    <div class="col-2">
+                        <h5 i18n="@@if" (mouseenter)="toggleParentHover(true)" class="bold">if</h5>
+                    </div>
+                    <div class="col-10 pad-0">
+                        <ng-container *ngTemplateOutlet="rulePattern"></ng-container>
+                    </div>
+                </div>
+            </div>
+            <div class="col-8">
+                <div class="row">
+                    <div class="col-2" (click)="openRuleModal()">
+                        <h5 i18n="@@then" (mouseenter)="toggleParentHover(true)" class="bold">then</h5>
+                    </div>
+                    <div *ngIf="rulesets && !rulesets[Rule?.ruleActions?.thencall!].is_internal" class="col-10 pad-0">
+                        <ng-container *ngTemplateOutlet="thencallexternal"></ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="rulesets && rulesets[Rule?.ruleActions?.thencall!].is_internal" class="then-child indent-3"
+            [ngClass]="parentHovered ? 'hovered' : ''" (mouseenter)="parentHovered = false">
+            <ng-container *ngTemplateOutlet="thencallinternal"></ng-container>
+        </div>
+        <div class="else-block" [ngClass]="parentHovered ? 'hovered' : ''" (mouseenter)="toggleParentHover(true)"
+            (mouseleave)="toggleParentHover(false)">
+            <div class="row">
+                <div class="col-2" (click)="openRuleModal()">
+                    <h5 i18n="@@else" (mouseenter)="toggleParentHover(true)" class="bold">else</h5>
+                </div>
+                <div *ngIf="rulesets && !rulesets[Rule?.ruleActions?.elsecall!].is_internal" class="col-10 pad-0">
+                    <ng-container *ngTemplateOutlet="elsecallexternal"></ng-container>
+                </div>
+            </div>
+            <div *ngIf="rulesets && rulesets[Rule?.ruleActions?.elsecall!].is_internal" class="else-child indent-3"
+                [ngClass]="parentHovered ? 'hovered' : ''" (mouseenter)="parentHovered = false">
+                <ng-container *ngTemplateOutlet="elsecallinternal"></ng-container>
+            </div>
+        </div>
+        <div class="row mt-2" (click)="openRuleModal()">
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-4">
+                        <h5 i18n="@@endif" (mouseenter)="toggleParentHover(true)" class="bold">endif</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-container>
+
+<!-- IF only then exists -->
+<ng-container *ngIf="Rule?.thenRuleset && !Rule?.elseRuleset">
+    <div class="if-block" [ngClass]="parentHovered ? 'hovered' : ''" (mouseenter)="toggleParentHover(true)"
+        (mouseleave)="toggleParentHover(false)">
+        <div class="row mt-2">
+            <div class="col-6" (click)="openRuleModal()">
+                <div class="row">
+                    <div class="col-2">
+                        <h5 i18n="@@if" (mouseenter)="toggleParentHover(true)" class="bold">if</h5>
+                    </div>
+                    <div class="col-10 pad-0">
+                        <ng-container *ngTemplateOutlet="rulePattern"></ng-container>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-2" (click)="openRuleModal()">
+                        <h5 i18n="@@then" (mouseenter)="toggleParentHover(true)" class="bold">then</h5>
+                    </div>
+                    <div *ngIf="rulesets && !rulesets[Rule?.ruleActions?.thencall!].is_internal" class="col-10 pad-0">
+                        <ng-container *ngTemplateOutlet="thencallexternal"></ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="rulesets && rulesets[Rule?.ruleActions?.thencall!].is_internal" class="then-child indent-3"
+            [ngClass]="parentHovered ? 'hovered' : ''" (mouseenter)="parentHovered = false">
+            <ng-container *ngTemplateOutlet="thencallinternal"></ng-container>
+        </div>
+        <div class="row mt-2" (click)="openRuleModal()">
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-4">
+                        <h5 i18n="@@endif" (mouseenter)="toggleParentHover(true)" class="bold">endif</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-container>
+
+<!-- IF only else exists -->
+<ng-container *ngIf="!Rule?.thenRuleset && Rule?.elseRuleset">
+    <div class="if-block" [ngClass]="parentHovered ? 'hovered' : ''" (mouseenter)="toggleParentHover(true)"
+        (mouseleave)="toggleParentHover(false)">
+        <div class="row mt-2">
+            <div class="col-4" (click)="openRuleModal()">
+                <div class="row">
+                    <div class="col-3">
+                        <h5 i18n="@@ifnot" (mouseenter)="toggleParentHover(true)" class="bold">if not</h5>
+                    </div>
+                    <div class="col-9 pad-0">
+                        <ng-container *ngTemplateOutlet="rulePattern"></ng-container>
+                    </div>
+                </div>
+            </div>
+            <div class="col-8">
+                <div class="row">
+                    <div class="col-2" (click)="openRuleModal()">
+                        <h5 i18n="@@then" (mouseenter)="toggleParentHover(true)" class="bold">then</h5>
+                    </div>
+                    <div *ngIf="rulesets && !rulesets[Rule?.ruleActions?.elsecall!].is_internal" class="col-10 pad-0">
+                        <ng-container *ngTemplateOutlet="elsecallexternal"></ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="rulesets && rulesets[Rule?.ruleActions?.elsecall!].is_internal" class="else-block"
+            [ngClass]="parentHovered ? 'hovered' : ''" (mouseenter)="parentHovered = false">
+            <ng-container *ngTemplateOutlet="elsecallinternal"></ng-container>
+        </div>
+        <div class="row mt-2" (click)="openRuleModal()">
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-4">
+                        <h5 i18n="@@endif" (mouseenter)="toggleParentHover(true)" class="bold">endif</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-container>
+
+<!-- IF both then and else doesn't exists -->
+<ng-container *ngIf="!Rule?.thenRuleset && !Rule?.elseRuleset">
+    <app-do-match [childHovered]="parentHovered" [Rule]="Rule" [index]="index" [rulesets]="rulesets" [schemaData]="schemaData"
+        [WorksFlows]="WorksFlows" (updateRule)="updateRtreeStructure($event)"></app-do-match>
+</ng-container>
+
+
+<!-- Reuseable Templates -->
+
+<!-- Template to display rulePattern -->
+<ng-template #rulePattern>
+    <div class="card px-2" [ngClass]="parentHovered ? 'hovered' : ''" (mouseenter)="toggleParentHover(true)"
+        (mouseleave)="toggleParentHover(false)">
+        <span>
+            <span class="h6">
+                <span *ngFor="let pattern of getMatchList(Rule?.rulePattern!), let isLast = last">
+                    {{ pattern.attr }} <span [innerHTML]="OperatorsUnicode[pattern.op]" class="fs-5"></span> {{
+                    pattern.val }} {{isLast ? '...' : ','}}
+                </span>
+            </span>
+        </span>
+    </div>
+</ng-template>
+
+<!-- thenblock if is_internal = true -->
+<ng-template #thencallinternal>
+    <ng-container *ngFor="let Rule of Rule?.thenRuleset, let i = index">
+        <app-then-else-call [parentHovered]="parentHovered" [Rule]="Rule" [index]="i" [rulesets]="rulesets"
+            [schemaData]="schemaData" [WorksFlows]="WorksFlows" (openDetail)="openWorkflowDetail($event)"
+            (updateRule)="updateRtreeThenAndElseStructure($event,i,'then')"></app-then-else-call>
+    </ng-container>
+</ng-template>
+
+<!-- thenblock if is_internal = false -->
+<ng-template #thencallexternal>
+    <div class="card px-2" [ngClass]="parentHovered ? 'hovered' : ''" (mouseenter)="toggleParentHover(true)"
+        (mouseleave)="toggleParentHover(false)">
+        <span class="h6">
+            <a class="click" type="button"
+                (click)="openWorkflowDetail({name:Rule?.ruleActions?.thencall!,RTree:Rule?.thenRuleset!})">{{Rule?.ruleActions?.thencall}}
+                <i class="fa-solid fa-up-right-from-square"></i></a>
+        </span>
+    </div>
+</ng-template>
+
+<!-- elseblock if is_internal = true -->
+<ng-template #elsecallinternal>
+    <div class="else-child indent-3">
+        <ng-container *ngFor="let Rule of Rule?.elseRuleset, let i = index">
+            <app-then-else-call [parentHovered]="parentHovered" [Rule]="Rule" [index]="i" [rulesets]="rulesets"
+                [schemaData]="schemaData" [WorksFlows]="WorksFlows" (openDetail)="openWorkflowDetail($event)"
+                (updateRule)="updateRtreeThenAndElseStructure($event, i, 'else')"></app-then-else-call>
+        </ng-container>
+    </div>
+</ng-template>
+
+<!-- elseblock if is_internal = false -->
+<ng-template #elsecallexternal>
+    <div class="card px-2" [ngClass]="parentHovered ? 'hovered' : ''" (mouseenter)="toggleParentHover(true)"
+        (mouseleave)="toggleParentHover(false)">
+        <span class="h6">
+            <a class="click" type="button"
+                (click)="openWorkflowDetail({name:Rule?.ruleActions?.elsecall!,RTree:Rule?.elseRuleset!})">{{Rule?.ruleActions?.elsecall}}
+                <i class="fa-solid fa-up-right-from-square"></i></a>
+        </span>
+    </div>
+</ng-template>

@@ -1,0 +1,57 @@
+<div class="container mt-2">
+    <div class="row">
+        <div class="col-8">
+            <div class="d-flex flex-column flex-md-row">
+                <div class="col-3">
+                    <label  i18n="@@App" class="fs-20 fw-600 ml-3 text-color">Application</label>
+                </div>
+                <div class="col-3">
+                    <ng-select class="dropdown" (change)="getSliceList()" id="app" [(ngModel)]="selectedData.app"
+                    i18n-placeholder="@@placeholderApp"    placeholder="--Select App--">
+                        <ng-option *ngFor="let app of appList" [value]="app.value">{{app.discription}}</ng-option>
+                    </ng-select>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 p-0 m-0  ">
+            <button type="button" [routerLink]="['/replicate-realmslice']" class="btn realm d-none d-xl-block d-md-block d-lg-block" style="float: right;" i18n="@@ReplicateRealmSliceButton">Replicate Realm Slice</button>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-8">
+            <div *ngIf="sliceList" class="d-flex flex-column flex-md-row">
+                <div class="col-3">
+                    <label i18n="@@Slice" class="fs-20 fw-600 ml-3 text-color">Slice</label>
+                </div>
+                <div class="col-5 ml-3">
+                    <ng-select class="dropdown" (change)="getClassList()" id="slice" [(ngModel)]="selectedData.slice"
+                    i18n-placeholder="@@placeholderSlice"    placeholder="--Select Slice--">
+                        <ng-option *ngFor="let slice of sliceList" [value]="slice.value">{{slice.discription}}</ng-option>
+                    </ng-select>
+                </div>
+                <div class="col-3" *ngIf="selectedData.slice">
+                    <input id="activateRealmSlice" [(ngModel)]="isRealmSliceActive" type="checkbox" (click)="activateOrDeactiveRealSlice()">&nbsp;
+                    <label for="activateRealmSlice" i18n="@@ActivateRealmSliceLabel" class=" text-color">Activate RealmSlice</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-8">
+            <div *ngIf="classList" class="d-flex flex-column flex-md-row">
+                <div class="col-3">
+                    <label i18n="@@WorkflowProcess" class="fs-20 fw-600 ml-3 text-color">Workflow Process</label>
+                </div>
+                <div class="col-3">
+                    <ng-select (change)="getDetails()" class="dropdown" [(ngModel)]="selectedData.class"
+                        id="class"  i18n-placeholder="@@placeholderWorkflow" placeholder="--Select Class--">
+                        <ng-option *ngFor="let class of classList" [value]="class">{{class}}</ng-option>
+                    </ng-select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-3">
+        <app-tablist *ngIf="schemaData != undefined || WorksFlows != undefined" [schemaData]="schemaData" [WorksFlows]="WorksFlows"></app-tablist>
+    </div>
+</div>

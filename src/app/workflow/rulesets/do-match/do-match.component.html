@@ -1,0 +1,42 @@
+<div class="row mt-2 child" [ngClass]="childHovered  ? 'hovered' : ''" (mouseenter)="childHovered = true"
+    (mouseleave)="childHovered = false" (click)="openRuleModal()">
+    <div class="col-md-12 col-sm-12">
+        <div class="row">
+            <div class="col-1">
+                <h5 i18n="@@match">match</h5>
+            </div>
+            <div class="col-11">
+                <div class="card px-2 pointer" [ngClass]="childHovered ? 'hovered': ''" (mouseenter)="childHovered = true"
+                    (mouseleave)="childHovered = false">
+                    <span class="h6">
+                        <span *ngFor="let pattern of getMatchList(Rule?.rulePattern!), let isLast = last">
+                            {{ pattern.attr }} <span [innerHTML]="OperatorsUnicode[pattern.op]"></span>
+                            {{ pattern.val }} {{isLast ? '...' : ','}}
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-1">
+                <h5 i18n="@@do">do</h5>
+            </div>
+            <div class="col-11 ">
+                <div class="card px-2 pointer" [ngClass]="childHovered ? 'hovered': ''" (mouseenter)="childHovered = true"
+                    (mouseleave)="childHovered = false">
+                    <div>
+                        <b>{{Rule && Rule.ruleActions.tasks.length > 1 ? 'NextSteps' : 'NextStep'}}:</b>
+                        <span class="h6"> {{Rule && Rule.ruleActions.tasks[0]}}...</span>&nbsp;
+                        <span>
+                            <b>{{Rule && Rule.ruleActions.tasks.length > 1 ? 'NextStep Tags' : 'NextStep Tag'}}:</b>
+                            <span class="h6" *ngFor="let property of _commonService.sliceObject(Rule?.ruleActions?.properties,0,1) | keyvalue">
+                                {{ property.key }} - {{
+                                    property.value }}...
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

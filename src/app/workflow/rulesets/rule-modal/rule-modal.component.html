@@ -1,0 +1,400 @@
+<div class="overlay"></div>
+<div class="modal-dialog modal-md modal-dialog-centered" style="padding: 20px 10px;" role="document">
+    <div class="modal-content">
+        <div class="modal-header justify-content-between">
+            <h5 class="modal-title fw-bold" id="ruleModalLabel">Rule Details</h5>
+            <h6 style="color: #777" class="modal-title" id="ruleModalLabel">{{this.Ruleset?.name}}</h6>
+            <button type="button" class="close" (click)="closeModal()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <!--Display Rule Screen-->
+            <ng-container *ngIf="!isEdit">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div *ngFor="let rule of Rule?.rulePattern">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <p class="fs-5">{{ rule?.attr }}</p>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <p [innerHTML]="OperatorsUnicode[rule.op]" class="fs-5"></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p class="fs-5">{{ getSchemaDetailsByAttrName(rule?.attr!)?.valtype == 'ts'
+                                            ? (rule?.val | date:'MMM dd, YYYY, hh:mm:ss a') : rule?.val }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="fs-20 mb-2">
+                                <b>{{(Rule && Rule.ruleActions.tasks.length > 1) ? 'NextSteps' : 'NextStep'}}:</b>
+                                <span class="badge bg-primary mx-2 fs-10"
+                                    *ngFor="let task of Rule?.ruleActions?.tasks">{{
+                                    task }}</span>
+                            </div>
+                            <div class="mt-4 fs-20">
+                                <b>{{(Rule && Rule.ruleActions.properties) ? 'NextStep Tags' :
+                                    'NextStepTag'}}:</b>
+                                <span class="badge bg-success mx-2 fs-10"
+                                    *ngFor="let property of Rule?.ruleActions?.properties | keyvalue">
+                                    {{property.key}} - {{
+                                    property.value }}
+                                </span>
+                            </div>
+                            <div class="fs-20 mt-4 d-flex">
+                                <div *ngIf="Rule?.ruleActions?.thencall">
+                                    <b>thenCall:</b>
+                                    <span class="badge bg-primary mx-2 fs-10">{{ Rule?.ruleActions?.thencall
+                                        }}</span>
+                                </div>
+                                <div *ngIf=" Rule?.ruleActions?.elsecall">
+                                    <b>elseCall:</b>
+                                    <span class="badge bg-primary mx-2 fs-10">{{
+                                        Rule?.ruleActions?.elsecall }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+            <!-- Edit Rule Screen -->
+            <ng-container *ngIf="isEdit">
+                <div [formGroup]="RuleForm">
+                    <div *ngIf="action == 'workflow'" class="container-fluid">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="d-flex align-items-center">
+                                    <b class="m-2">Workflow name: </b>
+                                    <div style="display: inline-flex;" class="form-check form-switch">
+                                        <input type="text" class="form-control" id="name" formControlName="name"
+                                            placeholder="Workflow Name" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="d-flex align-items-center">
+                                    <b class="m-2">is_internal: </b>
+                                    <div style="display: inline-flex;" class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" formControlName="is_internal"
+                                            role="switch" id="is_internal">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="note d-flex justify-content-end align-items-center" *ngIf="action == 'workflow'">
+                        <button style="float: right;" class="btn realm add-btn" (click)="addFlowRules()">Add Rule</button>
+                    </div>
+                    <div class="container-fluid" formArrayName="flowrules">
+                        <div *ngFor="let rule of flowrules.controls,let flowRulesIndex = index, let islast = first"
+                            [formGroupName]="flowRulesIndex">
+                            <hr style="border: 2px solid #000;" *ngIf="!islast">
+                            <div class="note d-flex justify-content-end align-items-center mt-2" *ngIf="action == 'workflow'">
+                                <button style="float: right;" class="btn realm add-btn" (click)="removeFlowRulesByIndex(flowRulesIndex)"><i class="fa fa-trash"></i></button>
+                            </div>
+                            <div class="row">
+                                <div class="col-12" formArrayName="rulepattern">
+                                    <div *ngFor="let rule of getRulePatternAt(flowRulesIndex).controls,let i = index"
+                                        [formGroupName]="i">
+                                        <div class="row mb-2">
+                                            <div class="col-md-3 col-sm-5">
+                                                <select (change)="onAttrNameChangeHandler(flowRulesIndex,i)"
+                                                    formControlName="attr" class="form-control" id="{{i}}-attrName">
+                                                    <option disabled value="">
+                                                        Select
+                                                    </option>
+                                                    <option
+                                                        *ngFor="let attrName of getAttributesNamesByIndex(flowRulesIndex,i)"
+                                                        [value]="attrName">
+                                                        {{attrName}}
+                                                    </option>
+                                                </select>
+                                                <div *ngIf="getRulePatternAt(flowRulesIndex).controls[i].get('attr')?.touched"
+                                                    class="text-danger">
+                                                    <div
+                                                        *ngIf="getRulePatternAt(flowRulesIndex).controls[i].get('attr')?.hasError('required')">
+                                                        <small>Name is required</small>
+                                                    </div>
+                                                    <div
+                                                        *ngIf="getRulePatternAt(flowRulesIndex).controls[i].get('attr')?.hasError('validationError')">
+                                                        <small>Validation is required</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1 col-sm-2">
+                                                <select formControlName="op" class="form-control" id="{{i}}-op">
+                                                    <option disabled value="">
+                                                        Select
+                                                    </option>
+                                                    <option *ngFor="let op of getOperatorsList(flowRulesIndex,i)"
+                                                        [value]="op">
+                                                        <p [innerHTML]="OperatorsUnicode[op]" class="fs-5"></p>
+                                                    </option>
+                                                </select>
+                                                <div *ngIf="getRulePatternAt(flowRulesIndex).controls[i].get('op')?.touched"
+                                                    class="text-danger">
+                                                    <div
+                                                        *ngIf="getRulePatternAt(flowRulesIndex).controls[i].get('op')?.hasError('required')">
+                                                        <small>Required</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-sm-5">
+                                                <ng-container
+                                                    [ngSwitch]="getSchemaDetailsByIndex(flowRulesIndex,i)?.valtype">
+                                                    <!-- Input for type Bool -->
+                                                    <ng-container *ngSwitchCase="'bool'">
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                role="switch" id="{{i}}-attrval" formControlName="val">
+                                                        </div>
+                                                    </ng-container>
+                                                    <!-- Input for type enum -->
+                                                    <ng-container *ngSwitchCase="'enum'">
+                                                        <select formControlName="val" class="form-control"
+                                                            id="{{i}}-attrval">
+                                                            <option disabled value="">
+                                                                Select
+                                                            </option>
+                                                            <option
+                                                                *ngFor="let val of getSchemaDetailsByIndex(flowRulesIndex,i)?.vals"
+                                                                [value]="val">
+                                                                {{val}}
+                                                            </option>
+                                                        </select>
+                                                    </ng-container>
+                                                    <ng-container *ngSwitchCase="'ts'">
+                                                        <p-calendar formControlName="val" [showIcon]="true"
+                                                            [showTime]="true" [showSeconds]="true"
+                                                            appendTo="body"></p-calendar>
+                                                    </ng-container>
+                                                    <!-- Input for rest of the type -->
+                                                    <ng-container *ngSwitchDefault>
+                                                        <input
+                                                            [type]="getSchemaDetailsByIndex(flowRulesIndex,i)?.valtype == 'int' ? 'number' : 'text'"
+                                                            class="form-control" id="{{i}}-attrval"
+                                                            formControlName="val" placeholder="attrvalue" />
+                                                    </ng-container>
+                                                </ng-container>
+                                                <div *ngIf="getRulePatternAt(flowRulesIndex).controls[i].get('val')?.touched"
+                                                    class="text-danger">
+                                                    <div
+                                                        *ngIf="getRulePatternAt(flowRulesIndex).controls[i].get('val')?.hasError('required')">
+                                                        <small>Value is required</small>
+                                                    </div>
+                                                    <div
+                                                        *ngIf="getRulePatternAt(flowRulesIndex).controls[i].get('val')?.hasError('ConstraintsError')">
+                                                        <small>{{getRulePatternAt(flowRulesIndex).controls[i].get('val')?.errors!['message']
+                                                            }}</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1 col-sm-5">
+                                                <button class="btn"
+                                                    (click)="removeRulePatternByIndex(flowRulesIndex,i)">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button class="btn realm add-btn" (click)="addPatterns(flowRulesIndex)">Add Pattern</button>
+                                </div>
+                            </div>
+                            <hr>
+                            <div formGroupName="ruleactions">
+                                <!--Edit NextStep-->
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="fs-20 mb-2">
+                                            <div class="row">
+                                                <div class="col-md-8">
+                                                    <b class="m-2">{{getFlowRulesAtIndex(flowRulesIndex).get('ruleactions')?.get('tasks')?.value.length
+                                                        > 1 ? 'NextSteps:'
+                                                        : 'NextStep:'}}</b>
+                                                    <p-multiSelect [filter]="false" class="w-100" display="chip"
+                                                        [options]="SchemaData?.actionschema?.tasks"
+                                                        formControlName="tasks"
+                                                        placeholder="--Select next step--"></p-multiSelect>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="d-flex align-items-center">
+                                                        <b class="m-2">Mark done: </b>
+                                                        <div style="display: inline-flex;"
+                                                            class="form-check form-switch">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                formControlName="isDone"
+                                                                (change)="markTaskDoneHandler(flowRulesIndex)"
+                                                                role="switch" id="isdone">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Edit NextStep Tags-->
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="fs-20 mb-2" formArrayName="properties">
+                                            <b class="m-2">{{getFlowRulesAtIndex(flowRulesIndex).get('ruleactions')?.get('properties')?.value.length
+                                                > 1 ? 'NextStep Tags:'
+                                                : 'NextStep Tag:'}}</b>
+                                            <div *ngFor="let property of getPropertiesnAt(flowRulesIndex).controls,let i = index"
+                                                [formGroupName]="i">
+                                                <div class="row mb-2">
+                                                    <div class="col-md-3 col-sm-5">
+                                                        <select (change)="propertyNameChangeHandler(flowRulesIndex,i)"
+                                                            formControlName="name" class="form-control" id="{{i}}-name">
+                                                            <option disabled value="">
+                                                                Select
+                                                            </option>
+                                                            <option
+                                                                *ngFor="let propName of SchemaData?.actionschema?.properties"
+                                                                [value]="propName">
+                                                                {{propName}}
+                                                            </option>
+                                                        </select>
+                                                        <div *ngIf="getPropertiesnAt(flowRulesIndex).controls[i].get('name')?.touched"
+                                                            class="text-danger">
+                                                            <div
+                                                                *ngIf="getPropertiesnAt(flowRulesIndex).controls[i].get('name')?.hasError('required')">
+                                                                <small>Name is required</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3 col-sm-5">
+                                                        <select formControlName="val" class="form-control"
+                                                            id="{{i}}-val">
+                                                            <option disabled value="">
+                                                                Select
+                                                            </option>
+                                                            <option *ngFor="let val of SchemaData?.actionschema?.tasks"
+                                                                [value]="val">
+                                                                {{val}}
+                                                            </option>
+                                                        </select>
+                                                        <div *ngIf="getPropertiesnAt(flowRulesIndex).controls[i].get('val')?.touched"
+                                                            class="text-danger">
+                                                            <div
+                                                                *ngIf="getPropertiesnAt(flowRulesIndex).controls[i].get('val')?.hasError('required')">
+                                                                <small>Value is required</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-1 col-sm-5">
+                                                        <button [disabled]="getIsDoneAt(flowRulesIndex)?.value"
+                                                            class="btn"
+                                                            (click)="removePropertiesByIndex(flowRulesIndex,i)">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <button class="btn realm add-btn"
+                                                    [disabled]="getIsDoneAt(flowRulesIndex)?.value"
+                                                    (click)="addPropeties(flowRulesIndex)">Add NextStepTag</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <!--ThenCall and ElseCall-->
+                                <div class="row mt-3">
+                                    <div class="col-md-3 d-flex">
+                                        <b class="m-2">thenCall: </b>
+                                        <select (change)="thenChangeHandler(flowRulesIndex)" class="form-control"
+                                            formControlName="thencall">
+                                            <option disabled value="">
+                                                Select </option>
+                                            <option *ngFor="let ruleset of getRulesetsList(flowRulesIndex,'then')"
+                                                [disabled]="ruleset.name == Ruleset?.name" [value]="ruleset.name">
+                                                {{ruleset.name}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="d-flex align-items-center">
+                                            <b class="m-2">Remove then: </b>
+                                            <div style="display: inline-flex;" class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox"
+                                                    formControlName="removeThen"
+                                                    (change)="toggleRemoveThenCall(flowRulesIndex)" role="switch"
+                                                    id="removeThen">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 d-flex">
+                                        <b class="m-2">elseCall: </b>
+                                        <select (change)="elseChangeHandler(flowRulesIndex)" class="form-control"
+                                            formControlName="elsecall">
+                                            <option disabled value="">
+                                                Select </option>
+                                            <option *ngFor="let ruleset of getRulesetsList(flowRulesIndex,'else')"
+                                                [disabled]="ruleset.name == Ruleset?.name" [value]="ruleset.name">
+                                                {{ruleset.name}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="d-flex align-items-center">
+                                            <b class="m-2">Remove else: </b>
+                                            <div style="display: inline-flex;" class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox"
+                                                    formControlName="removeElse"
+                                                    (change)="toggleRemoveElseCall(flowRulesIndex)" role="switch"
+                                                    id="removeElse">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Return and Exit-->
+                                <div class="row fs-20 mt-4">
+                                    <div class="col-md-2">
+                                        <div class="d-flex align-items-center">
+                                            <b>Return: </b>
+                                            <div style="display: inline-flex;" class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" formControlName="return"
+                                                    role="switch" id="willReturn">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="d-flex align-items-center">
+                                            <b>Exit: </b>
+                                            <div style="display: inline-flex;" class="form-check form-switch">
+                                                <input (change)="exitChangeHandler(flowRulesIndex)"
+                                                    class="form-check-input" type="checkbox" formControlName="exit"
+                                                    role="switch" id="willExit">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+        <div class="modal-footer">
+            <button class="btn p-1 mt-1 realm" (click)="onEditHandler()" [hidden]="isEdit">Edit
+                <i class="fa-regular fa-pen-to-square mt-2 mb-20"></i>
+            </button>
+            <button *ngIf="action != 'workflow'" class="btn p-1 mt-1 realm" [disabled]="RuleForm.invalid" (click)="saveHandler()"
+                [hidden]="!isEdit">{{action == 'add'? 'Add' : 'Save'}}
+                <i class="fa-regular fa-pen-to-square mt-2 mb-20"></i>
+            </button>
+            <button *ngIf="action == 'workflow'" class="btn p-1 mt-1 realm" [disabled]="RuleForm.invalid" (click)="addRulesetHandler()"
+                [hidden]="!isEdit">Add
+                <i class="fa-regular fa-pen-to-square mt-2 mb-20"></i>
+            </button>
+        </div>
+    </div>
+</div>

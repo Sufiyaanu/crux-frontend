@@ -1,0 +1,488 @@
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$crux-ui-primary: mat.define-palette(mat.$indigo-palette);
+$crux-ui-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$crux-ui-warn: mat.define-palette(mat.$red-palette);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as "color" or "typography".
+$crux-ui-theme: mat.define-light-theme((color: (primary: $crux-ui-primary,
+        accent: $crux-ui-accent,
+        warn: $crux-ui-warn,
+      )));
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include mat.all-component-themes($crux-ui-theme);
+
+/* You can add global styles to this file, and also import other style files */
+@import 'bootstrap/scss/bootstrap';
+@import "~@ng-select/ng-select/themes/default.theme.css";
+@import 'ngx-toastr/toastr';
+@import '~@fortawesome/fontawesome-free/css/all.css';
+@import "primeng/resources/themes/lara-light-blue/theme.css";
+@import "primeng/resources/primeng.css";
+
+:root {
+  --primary: #3f859c;
+  --meta-data: #3f859c;
+  --primary-text: #fff;
+  --white: #fff;
+  --background: #f9f9f9;
+  --text-color: #000;
+  --disabled-color: #777;
+}
+
+[data-theme="dark"] {
+  --primary: rgb(16, 74, 161);
+  --meta-data: #7fc9ff;
+  --primary-text: #ffffff;
+  --white: #fff;
+  --background: #303030;
+  --text-color: #fff;
+  --disabled-color: #fff;
+}
+
+
+@font-face {
+  font-family: 'Gotham-Black';
+  src: url('./assets/font/Gotham-Font/Gotham-Black.otf');
+}
+
+@font-face {
+  font-family: 'Gotham-Bold';
+  src: url('./assets/font/Gotham-Font/Gotham-Bold.otf');
+}
+
+@font-face {
+  font-family: 'GothamBold';
+  src: url('./assets/font/Gotham-Font/GothamBold.ttf');
+}
+
+@font-face {
+  font-family: 'GothamBoldItalic';
+  src: url('./assets/font/Gotham-Font/GothamBoldItalic.ttf');
+}
+
+@font-face {
+  font-family: 'GothamBook';
+  src: url('./assets/font/Gotham-Font/GothamBook.ttf');
+}
+
+@font-face {
+  font-family: 'Gotham-BookItalic';
+  src: url('./assets/font/Gotham-Font/Gotham-BookItalic.otf');
+}
+
+@font-face {
+  font-family: 'GothamBookItalic';
+  src: url('./assets/font/Gotham-Font/GothamBookItalic.ttf');
+}
+
+@font-face {
+  font-family: 'Gotham-Light';
+  src: url('./assets/font/Gotham-Font/Gotham-Light.otf');
+}
+
+@font-face {
+  font-family: 'GothamLight';
+  src: url('./assets/font/Gotham-Font/GothamLight.ttf');
+}
+
+@font-face {
+  font-family: 'GothamLightItalic';
+  src: url('./assets/font/Gotham-Font/GothamLightItalic.ttf');
+}
+
+@font-face {
+  font-family: 'GothamMedium';
+  src: url('./assets/font/Gotham-Font/GothamMedium.ttf');
+}
+
+@font-face {
+  font-family: 'GothamMedium_1';
+  src: url('./assets/font/Gotham-Font/GothamMedium_1.ttf');
+}
+
+@font-face {
+  font-family: 'GothamMediumItalic';
+  src: url('./assets/font/Gotham-Font/GothamMediumItalic.ttf');
+}
+
+@font-face {
+  font-family: 'Gotham-Thin';
+  src: url('./assets/font/Gotham-Font/Gotham-Thin.otf');
+}
+
+@font-face {
+  font-family: 'Gotham-ThinItalic';
+  src: url('./assets/font/Gotham-Font/Gotham-ThinItalic.otf');
+}
+
+@font-face {
+  font-family: 'Gotham-UltraItalic';
+  src: url('./assets/font/Gotham-Font/Gotham-UltraItalic.otf');
+}
+
+@font-face {
+  font-family: 'Gotham-XLight';
+  src: url('./assets/font/Gotham-Font/Gotham-XLight.otf');
+}
+
+@font-face {
+  font-family: 'Gotham-XLightItalic';
+  src: url('./assets/font/Gotham-Font/Gotham-XLightItalic.otf');
+}
+
+/* fonts end */
+
+html,
+body {
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0;
+  height: 100%;
+  background-color: var(--background);
+}
+
+body {
+  margin: 0;
+  font-family: "GothamBook", sans-serif;
+}
+
+.fa-sun {
+  font-size: 2rem;
+  color: var(--white);
+}
+
+.fa-moon {
+  font-size: 2rem;
+  color: var(--white);
+}
+
+.text-color {
+  color: var(--text-color);
+}
+
+.meta-data-color {
+  color: var(--meta-data-color)
+}
+
+.top-menu {
+  background-color: var(--primary);
+}
+
+.heading-color {
+  color: var(--primary);
+}
+
+.meta-data {
+  color: var(--meta-data);
+}
+
+.description {
+  color: var(--disabled-color);
+  font-size: 18px;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.offcanvas {
+  background-color: var(--primary);
+  width: 80% !important;
+}
+
+.modal-body {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+
+.ng-select .ng-select-container {
+  background-color: var(--white);
+  border-radius: 10px !important;
+  outline: none !important;
+  color: var(--input-field) !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+  padding: 3px 10px ;
+  height: 46px ;
+}
+
+.p-multiselect{
+  background-color: var(--white);
+  border-radius: 10px !important;
+  outline: none !important;
+  color: var(--input-field) !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+  padding: 3px 10px !important;
+  height: 36px ;
+  width: 16rem;
+}
+
+.w-100 .p-multiselect{
+  width: 26rem !important;
+  height: auto !important;
+}
+
+.p-multiselect-header{
+  height: 3rem !important;
+}
+
+.p-placeholder{
+  font-weight: 500;
+  color: rgb(153, 153, 153)
+}
+
+.p-multiselect .p-multiselect-label {
+  padding: 0.2rem 0.4rem;
+  font-weight: 600;
+}
+
+.p-multiselect-filter-container, .p-inputtext{
+  height: 2rem !important;
+}
+
+.p-multiselect-items-wrapper ul{
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.ng-select-dropdown {
+  width: 18rem !important;
+}
+
+.dropdown {
+  width: 250px;
+}
+
+.fs-20 {
+  font-size: 20px;
+}
+
+.fs-40 {
+  font-size: 40px;
+}
+
+.fw-600 {
+  font-weight: 600;
+}
+
+.active {
+  font-weight: 600;
+  color: black;
+}
+
+.not-active {
+  font-weight: 500;
+  color: rgb(89, 89, 89, 1);
+}
+
+.fs-22 {
+  font-size: 22px;
+}
+
+.fs-30 {
+  font-size: 30px;
+}
+
+.nav-link {
+  color: var(--meta-data);
+}
+
+.realm{
+  background-color: var(--primary);
+  color: white;
+}
+
+.realm:hover{
+  background-color: var(--primary);
+  color: white;
+}
+
+.click{
+  color: blue;
+}
+
+.disabled{
+  color: gray;
+}
+
+
+.card,
+.card-header {
+  background-color: #fff;
+  border: none;
+}
+
+.vertically-center {
+  display: flex;
+  align-items: center;
+}
+
+.if-block {
+  background-color: #fff;
+}
+
+.child {
+  background-color: #fff;
+}
+
+.hovered {
+  background-color: lightgray;
+}
+
+.inactive-color {
+  height: 10px;
+  width: 10px;
+  background-color: rgb(89, 89, 89, 1);
+}
+
+.active-color {
+  height: 10px;
+  width: 10px;
+  background-color: black;
+}
+
+.bold{
+ font-weight: bold;
+}
+
+.sticky-top {
+  z-index: 1 !important;
+}
+
+// for loader 
+.loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loader-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+      transform: rotate(0deg);
+  }
+
+  100% {
+      transform: rotate(360deg);
+  }
+}
+
+.description{
+  resize: none;
+  border-radius: 10px;
+  padding: 10px;
+  background-color: var(--white);
+  border-radius: 10px !important;
+  outline: none !important;
+  color: var(--input-field) !important;
+  width: 25rem !important;
+}
+
+.page-not-found{
+  text-align: center;
+  margin: 30px 0px;
+}
+
+.error{
+display: block;
+margin-left: auto;
+margin-right: auto;
+width: 50%;
+cursor: pointer;
+}
+
+.cdk-overlay-backdrop.cdk-overlay-backdrop-showing {
+  opacity: 1;
+  display: none !important;
+}
+
+.close {
+  outline: none;
+  color: #000;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.form-switch .form-check-input {
+  width: 4rem;
+  height: 2rem;
+}
+
+.add-btn:disabled{
+  background-color: gray;
+  color: white;
+}
+
+.overlay {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  pointer-events: auto;
+}
+
+.form-control:hover{
+  border: 1px solid blue;
+}
+
+.p-datepicker{
+  height: 250px !important;
+  overflow: auto;
+}
+
+.p-button-icon-only{
+  width: 1.3rem;
+  height: 2rem !important;
+}
+
+.p-datepicker table td {
+  padding: 0 !important;
+}
+
+
+@media screen and (max-width:1096px) {
+  .w-100 .p-multiselect{
+    width: 16rem !important;
+    height: auto !important;
+  }
+}
+

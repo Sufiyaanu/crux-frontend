@@ -1,0 +1,55 @@
+<nav class="navbar navbar-light top-menu sticky-top">
+  <div class="container-fluid p-2">
+    <div class="d-flex align-items-center pointer" routerLink="/">
+      <div class="mb-0 me-2">
+        <img alt="Remiges Business Icon" i18n-alt="@@remigesLogo" src="assets/img/logo.svg" />
+      </div>
+      <span i18n="@@cruxHeading" class="h2 mb-0 text-light">Crux</span>
+    </div>
+    <div class="d-none d-lg-flex d-xl-flex d-md-flex">
+      <div class="mx-3">
+        <button class="btn" id="themeBtn" (click)="changeTheme()">
+          <i *ngIf="isDarkTheme" class="fa-regular fa-sun"></i>
+          <i *ngIf="!isDarkTheme" class="fa-solid fa-moon"></i>
+        </button>
+      </div>
+      <div class="gradient-box">
+        <select class="form-select language-select" [(ngModel)]="selectedLocale"
+          (change)="navigateToLocale(selectedLocale)">
+          <option *ngFor="let locale of locales" [value]="locale.localeCode">{{ locale.label }}</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn d-xl-none d-md-none d-lg-none" type="button" data-bs-toggle="offcanvas"
+      data-bs-target="#offcanvas" aria-controls="offcanvas">
+      <i class="fas fa-bars"></i>
+    </button>
+  </div>
+</nav>
+<!-- Offcanvas menu -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas" aria-labelledby="offcanvasLabel">
+  <div class="offcanvas-header">
+    <div class="offcanvas-title" id="offcanvasLabel">
+      <img alt="Remiges Business Icon" i18n-alt="@@remigesLogo" src="assets/img/logo.svg" />
+    </div>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <!-- Placed theme and language dropdowns here -->
+    <div class="mx-3">
+      <button class="btn" id="themeBtn" (click)="changeTheme()">
+        <i *ngIf="isDarkTheme" class="fa-regular fa-sun"></i>
+        <i *ngIf="!isDarkTheme" class="fa-solid fa-moon"></i>
+      </button>
+    </div>
+    <div class="gradient-box">
+      <select class="form-select language-select" [(ngModel)]="selectedLocale"
+        (change)="navigateToLocale(selectedLocale)">
+        <option *ngFor="let locale of locales" [value]="locale.localeCode">{{ locale.label }}</option>
+      </select>
+    </div>
+    <div class="mt-2">
+      <button type="button" [routerLink]="['/replicate-realmslice']" class="btn btn-light">Replicate Realm</button>
+    </div>
+  </div>
+</div>
